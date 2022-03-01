@@ -38,6 +38,7 @@ success_count_lst = []
 avg_collision_lst = []
 avg_won_time_lst = []
 balloons_alive_lst = []
+avg_won_time_gen = []
 
 plt.style.use("bmh")
 algo_colors = [
@@ -277,14 +278,17 @@ def finish_generation():
     success_count_diff = success_count - temp_success_count
     avg_fitness = avg_fitness_sum / len(balloon_population)
     avg_collision = avg_collision_sum / len(balloon_population)
-    avg_won_time = avg_won_time_sum / len(balloon_population)
+    if success_count:
+        avg_won_time = avg_won_time_sum / success_count
+        avg_won_time_lst.append(avg_won_time)
+        avg_won_time_gen.append(generation_count)
+
     avg_coin = avg_coin_sum / len(balloon_population)
     avg_fitness_diff = avg_fitness - temp_avg_fitness
 
     avg_fitness_lst.append(avg_fitness)
     success_count_lst.append(success_count)
     avg_collision_lst.append(avg_collision)
-    avg_won_time_lst.append(avg_won_time)
     balloons_alive_lst.append(balloons_alive)
 
     for i, balloon in enumerate(balloon_population):
@@ -372,7 +376,7 @@ def finish_generation():
         collision_plot.fig.set_size_inches((12, 8))
         collision_plot.savefig('./results/' + level + '/collision_plot.png')
 
-        d = {'Geração': list(range(generation_count + 1)), 'Tempo médio de término': avg_won_time_lst}
+        d = {'Geração': avg_won_time_gen, 'Tempo médio de término': avg_won_time_lst}
         df = pd.DataFrame(d)
 
         sns.set(font_scale=1.2, style="whitegrid")
@@ -388,7 +392,7 @@ def finish_generation():
             dashes=False
         )
         time_plot.set_axis_labels("Geração", "Tempo médio de término")
-        time_plot.fig.suptitle('Gráfico do tempo gasto dos indivíduos com sucesso')
+        time_plot.fig.suptitle('Gráfico do tempo gasto médio dos indivíduos com sucesso')
         time_plot.fig.title_fontsize = 18
         time_plot.fig.set_size_inches((12, 8))
         time_plot.savefig('./results/' + level + '/time_plot.png')
@@ -599,7 +603,7 @@ coins = [
     Coin(930, 590, 30, 30)
 ]
 
-level3 = {'walls': walls, 'moving_enemies': moving_enemies, 'coins': coins, 'move_limit': 1300}  # 1800
+level3 = {'walls': walls, 'moving_enemies': moving_enemies, 'coins': coins, 'move_limit': 1000}  # 1800 # 950
 
 moving_enemies = [
     MovingEnemy(650, (720 / 2) - 70, 30, 30, vel_right, 'vertical', top_lim=620, bottom_lim=100),
